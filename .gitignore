@@ -1,0 +1,20 @@
+# IDE
+.idea/
+.vscode/
+
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+*.pt
+*.db
+*.mp4
+*.avi
+*.mov
+assets/*
+!assets/.gitkeep
+runs/
+screenshots/
+debug_crops/
