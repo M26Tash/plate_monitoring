@@ -18,3 +18,5 @@ assets/*
 runs/
 screenshots/
 debug_crops/
+
+datasets/*

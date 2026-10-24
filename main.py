@@ -13,6 +13,11 @@ from app.visualization import draw
 def build_pipeline(plate_weights: Path) -> Pipeline:
     vehicle_detector = VehicleDetector()
     plate_detector = None
+    if plate_weights.exists():
+        from app.plates.detector import PlateDetector
+        plate_detector = PlateDetector(plate_weights)
+    else:
+        print(f"[!] There are no weights ({plate_weights}) — working only wity vehicles")
     return Pipeline(vehicle_detector, plate_detector)
 
 
