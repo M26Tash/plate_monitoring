@@ -24,10 +24,14 @@ class BBox:
         return BBox(max(0, self.x1), max(0, self.y1),
                     min(width, self.x2), min(height, self.y2))
 
+    def padded(self, frac: float) -> "BBox":
+        dx, dy = int(self.width * frac), int(self.height * frac)
+        return BBox(self.x1 - dx, self.y1 - dy, self.x2 + dx, self.y2 + dy)
+
 
 @dataclass
 class PlateDetection:
-    bbox: BBox
+    bbox: BBox               # координаты на целом кадре
     confidence: float
 
 
@@ -38,3 +42,6 @@ class VehicleTrack:
     label: str
     confidence: float
     plate: PlateDetection | None = None
+    plate_text: str | None = None
+    plate_votes: int = 0
+    plate_confirmed: bool = False

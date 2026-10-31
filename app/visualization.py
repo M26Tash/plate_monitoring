@@ -1,6 +1,8 @@
 import cv2
 
-GREEN, YELLOW = (0, 255, 0), (0, 255, 255)
+from app.plates.validator import TurkishPlateValidator
+
+GREEN, YELLOW, ORANGE = (0, 255, 0), (0, 255, 255), (0, 165, 255)
 
 
 def draw(frame, tracks):
@@ -12,4 +14,9 @@ def draw(frame, tracks):
         if t.plate:
             p = t.plate.bbox
             cv2.rectangle(frame, (p.x1, p.y1), (p.x2, p.y2), YELLOW, 2)
+        if t.plate_text:
+            color = GREEN if t.plate_confirmed else ORANGE
+            text = f"{TurkishPlateValidator.pretty(t.plate_text)} ({t.plate_votes})"
+            cv2.putText(frame, text, (b.x1, min(frame.shape[0] - 10, b.y2 + 28)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
     return frame
