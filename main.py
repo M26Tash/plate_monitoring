@@ -1,3 +1,8 @@
+"""Запуск:
+    python main.py --source assets/video.mp4
+    python main.py --source assets/video.mp4 --verbose     (печатать, что читает OCR)
+Выход: клавиша q.
+"""
 import argparse
 from pathlib import Path
 
@@ -10,24 +15,30 @@ from app.vehicles.detector import VehicleDetector
 from app.visualization import draw
 
 
-def build_pipeline(plate_weights: Path) -> Pipeline:
+def build_pipeline(plate_weights: Path, verbose: bool = False) -> Pipeline:
     vehicle_detector = VehicleDetector()
-    plate_detector = None
-    if plate_weights.exists():
-        from app.plates.detector import PlateDetector
-        plate_detector = PlateDetector(plate_weights)
-    else:
-        print(f"[!] There are no weights ({plate_weights}) — working only wity vehicles")
-    return Pipeline(vehicle_detector, plate_detector)
+    if not plate_weights.exists():
+        print(f"[!] No licence plate weigths ({plate_weights}) — working only with cars.")
+        return Pipeline(vehicle_detector)
+
+    from app.plates.detector import PlateDetector
+    from app.plates.reader import PlateReader
+    from app.plates.validator import TurkishPlateValidator
+    from app.aggregation.voting import PlateVoter
+
+    return Pipeline(vehicle_detector, PlateDetector(plate_weights),
+                    reader=PlateReader(), validator=TurkishPlateValidator(),
+                    voter=PlateVoter(min_votes=3, min_agree=2), verbose=verbose)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", required=True)
     parser.add_argument("--plate-weights", default=str(config.PLATE_WEIGHTS))
+    parser.add_argument("--verbose", action="store_true", help="print OCR readings and voting")
     args = parser.parse_args()
 
-    pipeline = build_pipeline(Path(args.plate_weights))
+    pipeline = build_pipeline(Path(args.plate_weights), args.verbose)
 
     with VideoSource(args.source) as video:
         for _, _, frame in video.frames():
