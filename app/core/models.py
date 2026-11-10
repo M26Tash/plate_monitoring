@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from enum import Enum
 
 
 @dataclass(frozen=True)
@@ -24,11 +25,32 @@ class BBox:
         return BBox(max(0, self.x1), max(0, self.y1),
                     min(width, self.x2), min(height, self.y2))
 
+    def padded(self, frac: float) -> "BBox":
+        dx, dy = int(self.width * frac), int(self.height * frac)
+        return BBox(self.x1 - dx, self.y1 - dy, self.x2 + dx, self.y2 + dy)
+
 
 @dataclass
 class PlateDetection:
     bbox: BBox
     confidence: float
+
+
+@dataclass
+class PlateRead:
+    raw: str
+    text: str | None
+    confidence: float
+    char_probs: tuple[float, ...] | None = None
+
+
+class PlateStatus(str, Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    REVIEW_FOREIGN = "review_foreign"
+    REVIEW_UNSURE = "review_unsure"
+    REVIEW_CONFLICT = "review_conflict"
+    NO_PLATE = "no_plate"
 
 
 @dataclass
@@ -38,3 +60,5 @@ class VehicleTrack:
     label: str
     confidence: float
     plate: PlateDetection | None = None
+    plate_text: str | None = None
+    plate_status: PlateStatus | None = None
