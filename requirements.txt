@@ -1,3 +1,4 @@
 ultralytics
 opencv-python
 fast-plate-ocr[onnx]
+pyside6
