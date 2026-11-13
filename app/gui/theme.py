@@ -24,6 +24,7 @@ QCheckBox::indicator {{ width: 14px; height: 14px; border: 1px solid {MUTED}; }}
 QCheckBox::indicator:checked {{ background: {ACCENT}; border-color: {ACCENT}; }}
 QPushButton:disabled, QPushButton#Primary:disabled {{ color: {MUTED}; border-color: {BORDER}; background: {PANEL}; }}
 QWidget {{ background: transparent; color: {TEXT}; }}
+QDialog {{ background: {BG}; }}
 QToolTip {{ background: {PANEL}; color: {TEXT}; border: 1px solid {ACCENT}; padding: 4px; }}
 
 #Banner {{ background: {ACCENT}; color: {BG}; font-size: 10px; font-weight: 700;
@@ -92,6 +93,7 @@ QProgressBar::chunk {{ background: {ACCENT}; }}
 #FeedList::item:selected {{ background: {PANEL_HI}; }}
 #FeedPlate {{ font-size: 16px; font-weight: 700; letter-spacing: 2px; }}
 #FeedMeta {{ color: {MUTED}; font-size: 10px; }}
+#PlateEdit {{ font-size: 20px; font-weight: 700; letter-spacing: 3px; padding: 8px 10px; }}
 #FeedTag {{ font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 1px 5px; }}
 QPushButton#Danger {{ border-color: {DANGER}; color: {DANGER}; }}
 QPushButton#Danger:hover {{ background: {DANGER}; color: {BG}; }}

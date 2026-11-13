@@ -127,3 +127,6 @@ class MainWindow(QMainWindow):
         s = self.ctx.storage
         self._db_status.setText(f"DB: {Path(s.db.path).name}  ·  {s.sightings.count()} SIGHTINGS  ·  "
                                 f"{s.sightings.pending_reviews()} TO REVIEW   ")
+        for i, page in enumerate(self.pages):
+            badge = page.badge()
+            self.sidebar.item(i).setText(f"{page.code}  {page.title.upper()}" + (f"   [{badge}]" if badge else ""))

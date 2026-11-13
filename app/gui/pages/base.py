@@ -39,6 +39,10 @@ class Page(QWidget):
     def shutdown(self) -> None:
         """Called when the app closes: stop background work"""
 
+    def badge(self) -> str | None:
+        """Short text shown next to the page in the sidebar (e.g. a pending count)"""
+        return None
+
 
 class PlaceholderPage(Page):
 

@@ -1,13 +1,6 @@
 from app.gui.pages.base import Page, PlaceholderPage
 from app.gui.pages.monitor import MonitorPage
-
-
-class ReviewPage(PlaceholderPage):
-    code, title = "02", "Review"
-    subtitle = "Analyst queue: readings the system could not settle"
-    phase = "G3"
-    plan = "Conflict, unsure and foreign readings with crops: accept a reading, correct it or reject it."
-    feeds = "sightings where status = review_*"
+from app.gui.pages.review import ReviewPage
 
 
 class WantedPage(PlaceholderPage):
