@@ -36,6 +36,9 @@ class Page(QWidget):
     def on_show(self) -> None:
         """Called every time the page becomes visible"""
 
+    def shutdown(self) -> None:
+        """Called when the app closes: stop background work"""
+
 
 class PlaceholderPage(Page):
 

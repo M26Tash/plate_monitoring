@@ -1,12 +1,5 @@
 from app.gui.pages.base import Page, PlaceholderPage
-
-
-class MonitorPage(PlaceholderPage):
-    code, title = "01", "Monitor"
-    subtitle = "Live processing of a camera view: detections, plates, decisions"
-    phase = "G2"
-    plan = "Video with vehicle and plate boxes, play / pause / stop, live feed of decided plates."
-    feeds = "pipeline -> track finished events"
+from app.gui.pages.monitor import MonitorPage
 
 
 class ReviewPage(PlaceholderPage):

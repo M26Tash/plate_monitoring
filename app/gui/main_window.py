@@ -40,8 +40,23 @@ class MainWindow(QMainWindow):
         self.statusBar().addWidget(self._status)
         self._db_status = QLabel()
         self.statusBar().addPermanentWidget(self._db_status)
-        self.statusBar().addPermanentWidget(QLabel("PIPELINE: IDLE   v0.1  "))
+        self._pipeline_status = QLabel()
+        self.statusBar().addPermanentWidget(self._pipeline_status)
+        self.statusBar().addPermanentWidget(QLabel("v0.1  "))
+        self._set_pipeline_state("idle")
+        bus = ctx.bus
+        bus.source_changed.connect(self.set_source)
+        bus.pipeline_state.connect(self._set_pipeline_state)
+        bus.data_changed.connect(self.refresh_db_status)
         self.sidebar.setCurrentRow(0)
+
+    def _set_pipeline_state(self, state: str) -> None:
+        self._pipeline_status.setText(f"PIPELINE: {state.upper()}   ")
+
+    def closeEvent(self, event):
+        for page in self.pages:
+            page.shutdown()
+        super().closeEvent(event)
 
     def _banner(self) -> QLabel:
         banner = QLabel("MOCK DATA  //  LOCAL PROCESSING ONLY", objectName="Banner")

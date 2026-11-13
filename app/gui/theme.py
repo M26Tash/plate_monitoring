@@ -75,7 +75,35 @@ QScrollBar:vertical {{ background: transparent; width: 8px; }}
 QScrollBar::handle:vertical {{ background: {BORDER}; min-height: 30px; }}
 QScrollBar::handle:vertical:hover {{ background: {MUTED}; }}
 QScrollBar::add-line, QScrollBar::sub-line {{ height: 0; }}
+QScrollBar:horizontal {{ background: transparent; height: 8px; }}
+QScrollBar::handle:horizontal {{ background: {BORDER}; min-width: 30px; }}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{ width: 0; }}
+
+QDateTimeEdit, QDoubleSpinBox {{ background: {PANEL}; border: 1px solid {BORDER}; padding: 5px 8px; }}
+QComboBox QAbstractItemView {{ background: {PANEL}; border: 1px solid {ACCENT};
+                               selection-background-color: {PANEL_HI}; selection-color: {ACCENT}; }}
+QProgressBar {{ background: {PANEL}; border: 1px solid {BORDER}; height: 6px; max-height: 6px;
+                text-align: center; color: transparent; }}
+QProgressBar::chunk {{ background: {ACCENT}; }}
+
+#Readout {{ color: {DATA}; font-size: 12px; }}
+#FeedList {{ background: {PANEL}; border: none; }}
+#FeedList::item {{ border-bottom: 1px solid {BORDER}; }}
+#FeedList::item:selected {{ background: {PANEL_HI}; }}
+#FeedPlate {{ font-size: 16px; font-weight: 700; letter-spacing: 2px; }}
+#FeedMeta {{ color: {MUTED}; font-size: 10px; }}
+#FeedTag {{ font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 1px 5px; }}
+QPushButton#Danger {{ border-color: {DANGER}; color: {DANGER}; }}
+QPushButton#Danger:hover {{ background: {DANGER}; color: {BG}; }}
 """
+
+STATUS_COLORS = {
+    "confirmed": OK,
+    "review_conflict": WARN,
+    "review_unsure": WARN,
+    "review_foreign": DATA,
+    "no_plate": MUTED,
+}
 
 
 def mono(size: int = 10, bold: bool = False) -> QFont:
