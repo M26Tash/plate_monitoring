@@ -1,8 +1,11 @@
+from pathlib import Path
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                                QStackedWidget, QVBoxLayout, QWidget)
 
+from app.gui.context import AppContext
 from app.gui.pages import all_pages
 from app.gui.pages.base import Page
 from app.gui.widgets import Chip, GridBackground, UtcClock
@@ -13,11 +16,12 @@ SIDEBAR_WIDTH = 220
 
 class MainWindow(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, ctx: AppContext):
         super().__init__()
+        self.ctx = ctx
         self.setWindowTitle(f"{APP_NAME} — plate intelligence console")
         self.setMinimumSize(1240, 780)
-        self.pages: list[Page] = all_pages()
+        self.pages: list[Page] = all_pages(ctx)
 
         central = QWidget()
         root = QVBoxLayout(central)
@@ -34,7 +38,9 @@ class MainWindow(QMainWindow):
 
         self._status = QLabel("READY")
         self.statusBar().addWidget(self._status)
-        self.statusBar().addPermanentWidget(QLabel("DB: —   PIPELINE: IDLE   v0.1  "))
+        self._db_status = QLabel()
+        self.statusBar().addPermanentWidget(self._db_status)
+        self.statusBar().addPermanentWidget(QLabel("PIPELINE: IDLE   v0.1  "))
         self.sidebar.setCurrentRow(0)
 
     def _banner(self) -> QLabel:
@@ -77,7 +83,7 @@ class MainWindow(QMainWindow):
         lay.setSpacing(0)
         lay.addWidget(QLabel("MODULES", objectName="SectionLabel"))
         lay.addWidget(self.sidebar, 1)
-        lay.addWidget(QLabel("OPERATOR  ANALYST-01\nCLEARANCE  LOCAL", objectName="Operator"))
+        lay.addWidget(QLabel(f"OPERATOR  {self.ctx.operator}\nCLEARANCE  LOCAL", objectName="Operator"))
         return panel
 
     def _stage(self) -> QWidget:
@@ -100,3 +106,9 @@ class MainWindow(QMainWindow):
         page = self.pages[index]
         self._status.setText(f"MODULE {page.code} {page.title.upper()} — ACTIVE")
         page.on_show()
+        self.refresh_db_status()
+
+    def refresh_db_status(self) -> None:
+        s = self.ctx.storage
+        self._db_status.setText(f"DB: {Path(s.db.path).name}  ·  {s.sightings.count()} SIGHTINGS  ·  "
+                                f"{s.sightings.pending_reviews()} TO REVIEW   ")

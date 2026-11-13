@@ -49,5 +49,5 @@ class MapPage(PlaceholderPage):
     feeds = "track paths -> homography -> lat/lon"
 
 
-def all_pages() -> list[Page]:
-    return [MonitorPage(), ReviewPage(), WantedPage(), LogsPage(), VehiclesPage(), MapPage()]
+def all_pages(ctx) -> list[Page]:
+    return [cls(ctx) for cls in (MonitorPage, ReviewPage, WantedPage, LogsPage, VehiclesPage, MapPage)]

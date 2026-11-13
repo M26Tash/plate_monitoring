@@ -1,18 +1,18 @@
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication
 
-BG = "#07090b"          # window
-PANEL = "#0d1216"       # panels, inputs, tables
-PANEL_HI = "#121a20"    # hover / header strips
+BG = "#07090b"
+PANEL = "#0d1216"
+PANEL_HI = "#121a20"
 BORDER = "#1c272e"
-GRID = "#0e1519"        # background grid lines
+GRID = "#0e1519"
 TEXT = "#c6d2d8"
 MUTED = "#5d6f79"
-ACCENT = "#f5a524"      # amber: selection, brackets, headings
-DATA = "#2dd4bf"        # cyan: live values, coordinates, clock
-OK = "#3ddc84"          # confirmed
-WARN = "#f5a524"        # review
-DANGER = "#ff4d4f"      # wanted alert
+ACCENT = "#f5a524"
+DATA = "#2dd4bf"
+OK = "#3ddc84"
+WARN = "#f5a524"
+DANGER = "#ff4d4f"
 
 MONO = ["Cascadia Mono", "Consolas", "Courier New"]
 

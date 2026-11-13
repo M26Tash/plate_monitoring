@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget
 
+from app.gui.context import AppContext
 from app.gui.widgets import KeyValue, Panel
 
 
@@ -9,8 +10,9 @@ class Page(QWidget):
     title = "Page"
     subtitle = ""
 
-    def __init__(self):
+    def __init__(self, ctx: AppContext):
         super().__init__()
+        self.ctx = ctx
         outer = QVBoxLayout(self)
         outer.setContentsMargins(32, 22, 32, 22)
         outer.setSpacing(4)
