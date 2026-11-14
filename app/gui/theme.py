@@ -36,6 +36,11 @@ QToolTip {{ background: {PANEL}; color: {TEXT}; border: 1px solid {ACCENT}; padd
 #AlertText {{ color: {TEXT}; font-size: 11px; }}
 QPushButton#AlertClose {{ border: none; color: {MUTED}; padding: 0; }}
 QPushButton#AlertClose:hover {{ color: white; }}
+QTabWidget::pane {{ border: none; }}
+QTabBar::tab {{ background: transparent; color: {MUTED}; padding: 8px 18px; letter-spacing: 1px;
+                border-bottom: 2px solid transparent; }}
+QTabBar::tab:hover {{ color: {TEXT}; }}
+QTabBar::tab:selected {{ color: {ACCENT}; border-bottom: 2px solid {ACCENT}; }}
 #TopBar {{ background: {PANEL}; border-bottom: 1px solid {BORDER}; }}
 #Logo {{ color: {ACCENT}; font-size: 17px; font-weight: 700; letter-spacing: 3px; }}
 #LogoSub {{ color: {MUTED}; font-size: 10px; letter-spacing: 1px; }}

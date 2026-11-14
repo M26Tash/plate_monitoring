@@ -288,6 +288,9 @@ class EventRepository(Repository):
         sql = "SELECT * FROM events" + (" WHERE " + " AND ".join(where) if where else "")
         return self._many(Event, sql + " ORDER BY time DESC, id DESC LIMIT ?", params + [limit])
 
+    def for_sighting(self, sighting_id: int) -> list[Event]:
+        return self._many(Event, "SELECT * FROM events WHERE sighting_id = ? ORDER BY time, id", (sighting_id,))
+
 
 class Storage:
 

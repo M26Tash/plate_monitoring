@@ -1,15 +1,8 @@
 from app.gui.pages.base import Page, PlaceholderPage
 from app.gui.pages.monitor import MonitorPage
 from app.gui.pages.review import ReviewPage
+from app.gui.pages.logs import LogsPage
 from app.gui.pages.watchlist import WatchlistPage
-
-
-class LogsPage(PlaceholderPage):
-    code, title = "04", "Logs"
-    subtitle = "Sighting and event record"
-    phase = "G5"
-    plan = "Search by plate, filter by view, status and time, export to CSV, open a sighting's details."
-    feeds = "sightings, reviews, alerts"
 
 
 class VehiclesPage(PlaceholderPage):
