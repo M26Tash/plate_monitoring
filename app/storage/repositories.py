@@ -170,6 +170,16 @@ class SightingRepository(Repository):
     def pending_reviews(self) -> int:
         return self.db.conn.execute("SELECT COUNT(*) FROM sightings WHERE review = 'pending'").fetchone()[0]
 
+    def flag_for_review(self, sighting_id: int, alternatives: list[str]) -> None:
+        with self.db.transaction() as c:
+            c.execute("UPDATE sightings SET review = 'pending', alternatives = ? WHERE id = ?",
+                      (json.dumps(alternatives), sighting_id))
+
+    def plate_stats(self) -> dict[str, tuple[int, str]]:
+        rows = self.db.conn.execute("SELECT final_plate, COUNT(*), MAX(last_seen) FROM sightings "
+                                    "WHERE final_plate IS NOT NULL GROUP BY final_plate").fetchall()
+        return {r[0]: (r[1], r[2]) for r in rows}
+
 
 class VehicleRepository(Repository):
     table = "vehicles"

@@ -11,6 +11,7 @@ from app.gui.pages.base import Page
 from app.gui.pages.monitor import STATUS_TAGS, FeedRow, bgr_to_pixmap
 from app.gui.widgets import KeyValue, Panel
 from app.services.review import ReviewError, ReviewService, is_turkish
+from app.services.watchlist import WatchlistService
 from app.storage import Sighting
 
 CROP_HEIGHT = 170
@@ -66,6 +67,7 @@ class ReviewPage(Page):
 
     def build(self) -> None:
         self.service = ReviewService(self.ctx.storage, self.ctx.operator)
+        self.watchlist = WatchlistService(self.ctx.storage)
         self.current: Sighting | None = None
         self.queue_items: list[Sighting] = []
 
@@ -226,7 +228,10 @@ class ReviewPage(Page):
         src = self.ctx.storage.sources.get(s.source_id)
         self.f_status.value.setText(STATUS_TAGS.get(s.status, s.status.upper()))
         self.f_status.value.setStyleSheet(f"color: {theme.STATUS_COLORS.get(s.status, theme.TEXT)};")
-        self.f_why.value.setText(WHY.get(s.status, ""))
+        why = WHY.get(s.status, "")
+        if s.status == "confirmed":
+            why = f"reading is 1 character off a wanted plate ({', '.join(s.alternatives[1:])}): check it"
+        self.f_why.value.setText(why)
         self.f_read.value.setText(f"{s.plate or 'unreadable'} · {s.reads} reads · share {s.share:.2f}")
         self.f_seen.value.setText(f"{s.first_seen[:19]} · {src.name if src else '?'}")
         self.f_track.value.setText(f"#{s.track_id}  ·  {s.vehicle_type.upper()}  ·  run #{s.run_id}")
@@ -267,6 +272,10 @@ class ReviewPage(Page):
         try:
             self.service.decide(self.current, self.plate_edit.text(), foreign=foreign, reject=reject,
                                 note=self.note.text().strip() or None)
+            decided = self.ctx.storage.sightings.get(self.current.id)
+            hit = self.watchlist.check(decided, allow_near=False)
+            if hit is not None:
+                self.ctx.bus.alert.emit(hit)
         except ReviewError as e:
             self.error.setText(f"> {e}")
             return

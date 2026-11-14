@@ -89,7 +89,7 @@ class VideoView(QWidget):
 
 class FeedRow(QWidget):
 
-    def __init__(self, s: Sighting, crop, parent=None):
+    def __init__(self, s: Sighting, crop, parent=None, wanted: bool = False):
         super().__init__(parent)
         lay = QHBoxLayout(self)
         lay.setContentsMargins(8, 8, 8, 8)
@@ -119,6 +119,10 @@ class FeedRow(QWidget):
         tag = QLabel(STATUS_TAGS.get(s.status, s.status.upper()), objectName="FeedTag")
         tag.setStyleSheet(f"color: {color}; border: 1px solid {color};")
         meta.addWidget(tag)
+        if wanted:
+            hit = QLabel("WANTED", objectName="FeedTag")
+            hit.setStyleSheet(f"color: white; background: {theme.DANGER}; border: 1px solid {theme.DANGER};")
+            meta.addWidget(hit)
         meta.addWidget(QLabel(s.first_seen[11:19], objectName="FeedMeta"))
         meta.addStretch(1)
         text.addLayout(meta)
@@ -340,6 +344,7 @@ class MonitorPage(Page):
         self.worker.state_changed.connect(self._set_state)
         self.worker.frame_ready.connect(self._on_frame)
         self.worker.sighting_added.connect(self._on_sighting)
+        self.worker.alert.connect(self.ctx.bus.alert.emit)
         self.worker.failed.connect(lambda msg: QMessageBox.critical(self, "Processing failed", msg))
         self.worker.finished.connect(self._worker_done)
         self.worker.start()
@@ -401,7 +406,8 @@ class MonitorPage(Page):
         if s.status == "no_plate":
             return
         item = QListWidgetItem()
-        row = FeedRow(s, self.ctx.crops.load(s.plate_crop))
+        wanted = bool(s.final_plate) and self.ctx.storage.wanted.by_plate(s.final_plate) is not None
+        row = FeedRow(s, self.ctx.crops.load(s.plate_crop), wanted=wanted)
         item.setSizeHint(row.sizeHint())
         self.feed.insertItem(0, item)
         self.feed.setItemWidget(item, row)

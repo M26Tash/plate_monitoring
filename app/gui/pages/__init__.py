@@ -1,14 +1,7 @@
 from app.gui.pages.base import Page, PlaceholderPage
 from app.gui.pages.monitor import MonitorPage
 from app.gui.pages.review import ReviewPage
-
-
-class WantedPage(PlaceholderPage):
-    code, title = "03", "Watchlist"
-    subtitle = "Plates of interest that raise an alert on sighting"
-    phase = "G4"
-    plan = "Add, edit and import plates of interest. A hit raises an alert; a near match goes to review."
-    feeds = "every decided plate"
+from app.gui.pages.watchlist import WatchlistPage
 
 
 class LogsPage(PlaceholderPage):
@@ -36,4 +29,4 @@ class MapPage(PlaceholderPage):
 
 
 def all_pages(ctx) -> list[Page]:
-    return [cls(ctx) for cls in (MonitorPage, ReviewPage, WantedPage, LogsPage, VehiclesPage, MapPage)]
+    return [cls(ctx) for cls in (MonitorPage, ReviewPage, WatchlistPage, LogsPage, VehiclesPage, MapPage)]

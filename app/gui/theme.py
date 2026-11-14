@@ -29,6 +29,13 @@ QToolTip {{ background: {PANEL}; color: {TEXT}; border: 1px solid {ACCENT}; padd
 
 #Banner {{ background: {ACCENT}; color: {BG}; font-size: 10px; font-weight: 700;
            letter-spacing: 2px; padding: 2px; }}
+#BannerAlert {{ background: {DANGER}; color: white; font-size: 10px; font-weight: 700;
+                letter-spacing: 2px; padding: 2px; }}
+#AlertTitle {{ color: {DANGER}; font-size: 12px; font-weight: 700; letter-spacing: 2px; }}
+#AlertPlate {{ color: white; font-size: 22px; font-weight: 700; letter-spacing: 3px; }}
+#AlertText {{ color: {TEXT}; font-size: 11px; }}
+QPushButton#AlertClose {{ border: none; color: {MUTED}; padding: 0; }}
+QPushButton#AlertClose:hover {{ color: white; }}
 #TopBar {{ background: {PANEL}; border-bottom: 1px solid {BORDER}; }}
 #Logo {{ color: {ACCENT}; font-size: 17px; font-weight: 700; letter-spacing: 3px; }}
 #LogoSub {{ color: {MUTED}; font-size: 10px; letter-spacing: 1px; }}

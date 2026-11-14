@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow,
                                QStackedWidget, QVBoxLayout, QWidget)
 
+from app.gui.alerts import AlertToast
 from app.gui.context import AppContext
 from app.gui.pages import all_pages
 from app.gui.pages.base import Page
@@ -12,6 +13,7 @@ from app.gui.widgets import Chip, GridBackground, UtcClock
 
 APP_NAME = "OCULUS"
 SIDEBAR_WIDTH = 220
+BANNER_TEXT = "MOCK DATA  //  LOCAL PROCESSING ONLY"
 
 
 class MainWindow(QMainWindow):
@@ -48,7 +50,40 @@ class MainWindow(QMainWindow):
         bus.source_changed.connect(self.set_source)
         bus.pipeline_state.connect(self._set_pipeline_state)
         bus.data_changed.connect(self.refresh_db_status)
+        bus.alert.connect(self._on_alert)
+        self.toast = AlertToast(central)
+        self.toast.open_requested.connect(lambda: self.open_page("03"))
+        self._banner_timer = QTimer(self, singleShot=True, timeout=self._reset_banner)
         self.sidebar.setCurrentRow(0)
+
+    def open_page(self, code: str) -> None:
+        for i, page in enumerate(self.pages):
+            if page.code == code:
+                self.sidebar.setCurrentRow(i)
+
+    def _on_alert(self, hit) -> None:
+        s = hit.sighting
+        src = self.ctx.storage.sources.get(s.source_id)
+        self.toast.show_hit(hit, self.ctx.crops.load(s.plate_crop), src.name if src else "?")
+        w = hit.wanted
+        self.banner.setText(f"▲ ALERT  //  WANTED {w.plate}  //  {(w.reason or 'NO REASON').upper()}  //  "
+                            f"PRIORITY {w.priority.upper()}")
+        self.banner.setObjectName("BannerAlert")
+        self.banner.style().unpolish(self.banner)
+        self.banner.style().polish(self.banner)
+        self._banner_timer.start(12000)
+        self.refresh_db_status()
+
+    def _reset_banner(self) -> None:
+        self.banner.setText(BANNER_TEXT)
+        self.banner.setObjectName("Banner")
+        self.banner.style().unpolish(self.banner)
+        self.banner.style().polish(self.banner)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if hasattr(self, "toast"):
+            self.toast.reposition()
 
     def _set_pipeline_state(self, state: str) -> None:
         self._pipeline_status.setText(f"PIPELINE: {state.upper()}   ")
@@ -59,9 +94,9 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
 
     def _banner(self) -> QLabel:
-        banner = QLabel("MOCK DATA  //  LOCAL PROCESSING ONLY", objectName="Banner")
-        banner.setAlignment(Qt.AlignCenter)
-        return banner
+        self.banner = QLabel(BANNER_TEXT, objectName="Banner")
+        self.banner.setAlignment(Qt.AlignCenter)
+        return self.banner
 
     def _top_bar(self) -> QWidget:
         bar = QWidget(objectName="TopBar")

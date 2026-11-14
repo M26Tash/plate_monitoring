@@ -27,6 +27,7 @@ class PipelineWorker(QThread):
 
     state_changed = Signal(str)
     frame_ready = Signal(QImage, int, int, float)
+    alert = Signal(object)                      # services.watchlist.Hit
     sighting_added = Signal(object)
     failed = Signal(str)
 
@@ -61,6 +62,7 @@ class PipelineWorker(QThread):
         try:
             self.state_changed.emit("loading")
             from app.services.recorder import RunRecorder, resolve_file
+            from app.services.watchlist import WatchlistService
             from app.video.source import VideoSource
             from app.visualization import draw
             from main import build_pipeline
@@ -71,6 +73,7 @@ class PipelineWorker(QThread):
             with VideoSource(uri) as video:
                 total = int(video.cap.get(cv2.CAP_PROP_FRAME_COUNT)) if self.source.kind == "file" else 0
                 recorder = RunRecorder(self.storage, self.crops, self.source, self.source.fps or video.fps)
+                watchlist = WatchlistService(self.storage)
                 self.state_changed.emit("running")
                 started, speed = time.perf_counter(), 0.0
                 for _, _, frame in video.frames():
@@ -80,12 +83,12 @@ class PipelineWorker(QThread):
                     tracks = pipeline.process(frame)
                     frames += 1
                     for result in pipeline.pop_finished():
-                        self.sighting_added.emit(recorder.record(result))
+                        self._publish(recorder.record(result), watchlist)
                     elapsed = time.perf_counter() - started
                     speed = frames / elapsed if elapsed else 0.0
                     self.frame_ready.emit(to_qimage(draw(frame, tracks)), frames, total, speed)
                 for result in pipeline.flush():
-                    self.sighting_added.emit(recorder.record(result))
+                    self._publish(recorder.record(result), watchlist)
             state = "stopped" if self._stop.is_set() else "finished"
             recorder.finish(frames, state)
             self.state_changed.emit(state)
@@ -98,3 +101,11 @@ class PipelineWorker(QThread):
             self.state_changed.emit("failed")
         finally:
             self.storage.db.close()
+
+    def _publish(self, sighting, watchlist) -> None:
+        hit = watchlist.check(sighting)
+        if hit is not None:
+            sighting = hit.sighting
+            if hit.kind == "exact":
+                self.alert.emit(hit)
+        self.sighting_added.emit(sighting)

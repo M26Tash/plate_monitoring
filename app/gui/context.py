@@ -12,6 +12,7 @@ class EventBus(QObject):
     source_changed = Signal(str)
     pipeline_state = Signal(str)
     data_changed = Signal()
+    alert = Signal(object)
 
 
 @dataclass
