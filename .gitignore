@@ -25,3 +25,5 @@ labels.csv
 r3.csv
 truth_*.txt
 *.csv
+
+data/
