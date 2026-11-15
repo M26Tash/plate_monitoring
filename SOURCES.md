@@ -34,6 +34,7 @@ Model weights (`*.pt`) are not included in the repository.
 | [OpenCV](https://github.com/opencv/opencv-python) | 5.0 | Apache-2.0 | Video input and image processing |
 | [NumPy](https://github.com/numpy/numpy) | 2.5 | BSD-3-Clause | Arrays |
 | [PySide6 (Qt for Python)](https://doc.qt.io/qtforpython-6/) | 6.12 | LGPL-3.0 | Desktop user interface |
+| [Faker](https://github.com/joke2k/faker) | 40.5 | MIT | Generated (mock) owner names in the vehicle registry |
 
 ### Used only for comparison
 

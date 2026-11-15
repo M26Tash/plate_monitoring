@@ -2,15 +2,8 @@ from app.gui.pages.base import Page, PlaceholderPage
 from app.gui.pages.monitor import MonitorPage
 from app.gui.pages.review import ReviewPage
 from app.gui.pages.logs import LogsPage
+from app.gui.pages.registry import RegistryPage
 from app.gui.pages.watchlist import WatchlistPage
-
-
-class VehiclesPage(PlaceholderPage):
-    code, title = "05", "Registry"
-    subtitle = "Vehicle profiles (mock owner data)"
-    phase = "G6"
-    plan = "Owner (mock), model, detected colour and type, and every sighting of the plate."
-    feeds = "vehicle crops -> colour, YOLO -> type"
 
 
 class MapPage(PlaceholderPage):
@@ -22,4 +15,4 @@ class MapPage(PlaceholderPage):
 
 
 def all_pages(ctx) -> list[Page]:
-    return [cls(ctx) for cls in (MonitorPage, ReviewPage, WatchlistPage, LogsPage, VehiclesPage, MapPage)]
+    return [cls(ctx) for cls in (MonitorPage, ReviewPage, WatchlistPage, LogsPage, RegistryPage, MapPage)]

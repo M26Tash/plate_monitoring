@@ -11,6 +11,7 @@ from app.gui.pages.base import Page
 from app.gui.pages.monitor import STATUS_TAGS, FeedRow, bgr_to_pixmap
 from app.gui.widgets import KeyValue, Panel
 from app.services.review import ReviewError, ReviewService, is_turkish
+from app.services.registry import RegistryService
 from app.services.watchlist import WatchlistService
 from app.storage import Sighting
 
@@ -68,6 +69,7 @@ class ReviewPage(Page):
     def build(self) -> None:
         self.service = ReviewService(self.ctx.storage, self.ctx.operator)
         self.watchlist = WatchlistService(self.ctx.storage)
+        self.registry = RegistryService(self.ctx.storage)
         self.current: Sighting | None = None
         self.queue_items: list[Sighting] = []
 
@@ -273,6 +275,7 @@ class ReviewPage(Page):
             self.service.decide(self.current, self.plate_edit.text(), foreign=foreign, reject=reject,
                                 note=self.note.text().strip() or None)
             decided = self.ctx.storage.sightings.get(self.current.id)
+            self.registry.after_decision(decided)
             hit = self.watchlist.check(decided, allow_near=False)
             if hit is not None:
                 self.ctx.bus.alert.emit(hit)

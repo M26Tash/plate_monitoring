@@ -27,7 +27,7 @@ class PipelineWorker(QThread):
 
     state_changed = Signal(str)
     frame_ready = Signal(QImage, int, int, float)
-    alert = Signal(object)                      # services.watchlist.Hit
+    alert = Signal(object)
     sighting_added = Signal(object)
     failed = Signal(str)
 
@@ -62,6 +62,7 @@ class PipelineWorker(QThread):
         try:
             self.state_changed.emit("loading")
             from app.services.recorder import RunRecorder, resolve_file
+            from app.services.registry import RegistryService
             from app.services.watchlist import WatchlistService
             from app.video.source import VideoSource
             from app.visualization import draw
@@ -74,6 +75,7 @@ class PipelineWorker(QThread):
                 total = int(video.cap.get(cv2.CAP_PROP_FRAME_COUNT)) if self.source.kind == "file" else 0
                 recorder = RunRecorder(self.storage, self.crops, self.source, self.source.fps or video.fps)
                 watchlist = WatchlistService(self.storage)
+                self.registry = RegistryService(self.storage)
                 self.state_changed.emit("running")
                 started, speed = time.perf_counter(), 0.0
                 for _, _, frame in video.frames():
@@ -103,6 +105,8 @@ class PipelineWorker(QThread):
             self.storage.db.close()
 
     def _publish(self, sighting, watchlist) -> None:
+        if sighting.final_plate:
+            self.registry.ensure(sighting.final_plate)
         hit = watchlist.check(sighting)
         if hit is not None:
             sighting = hit.sighting

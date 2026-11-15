@@ -16,9 +16,9 @@ from app.gui.sighting_dialog import LEVEL_COLORS, SightingDialog
 from app.gui.widgets import Panel
 
 LIMIT = 2000
-SIGHTING_COLUMNS = ("TIME", "PLATE", "STATUS", "REVIEW", "SOURCE", "TYPE", "TRACK", "READS", "SHARE")
+SIGHTING_COLUMNS = ("TIME", "PLATE", "STATUS", "REVIEW", "SOURCE", "TYPE", "COLOUR", "TRACK", "READS", "SHARE")
 EVENT_COLUMNS = ("TIME", "LEVEL", "KIND", "PLATE", "MESSAGE")
-EVENT_KINDS = ("system", "run", "sighting", "review", "alert", "watchlist")
+EVENT_KINDS = ("system", "run", "sighting", "review", "alert", "watchlist", "registry")
 
 
 def make_table(columns: tuple[str, ...], stretch: int) -> QTableWidget:
@@ -152,6 +152,7 @@ class LogsPage(Page):
                      theme.WARN if s.review == "pending" else theme.MUTED),
                 cell(names.get(s.source_id, "?")),
                 cell(s.vehicle_type.upper()),
+                cell((s.color or "—").upper()),
                 cell(s.track_id),
                 cell(s.reads),
                 cell(f"{s.share:.2f}"),

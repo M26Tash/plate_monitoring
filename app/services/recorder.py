@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from app.core.models import PlateStatus, TrackResult
+from app.services.color import ColorClassifier
 from app.storage import CropStore, Sighting, Source, Storage
 
 REVIEW_STATUSES = {PlateStatus.REVIEW_CONFLICT, PlateStatus.REVIEW_UNSURE, PlateStatus.REVIEW_FOREIGN}
@@ -20,6 +21,7 @@ class RunRecorder:
         start = source.recorded_at or self.run.started_at
         self.t0 = datetime.fromisoformat(start)
         self.frames = 0
+        self.colors = ColorClassifier()
         storage.events.log("run", f"run #{self.run.id} started on source '{source.name}'")
 
     def time_of(self, frame: int) -> str:
@@ -36,7 +38,7 @@ class RunRecorder:
             review="pending" if needs_review else None,
             first_frame=r.first_frame, last_frame=r.last_frame,
             first_seen=self.time_of(r.first_frame), last_seen=self.time_of(r.last_frame),
-            vehicle_type=r.label, alternatives=list(r.alternatives), share=r.share, reads=r.reads,
+            vehicle_type=r.label, color=self.colors.classify(r.vehicle_crop), alternatives=list(r.alternatives), share=r.share, reads=r.reads,
             plate_crop=self.crops.save(r.plate_crop, self.run.id, r.track_id, "plate"),
             vehicle_crop=self.crops.save(r.vehicle_crop, self.run.id, r.track_id, "vehicle"),
         )
