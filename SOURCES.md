@@ -35,6 +35,15 @@ Model weights (`*.pt`) are not included in the repository.
 | [NumPy](https://github.com/numpy/numpy) | 2.5 | BSD-3-Clause | Arrays |
 | [PySide6 (Qt for Python)](https://doc.qt.io/qtforpython-6/) | 6.12 | LGPL-3.0 | Desktop user interface |
 | [Faker](https://github.com/joke2k/faker) | 40.5 | MIT | Generated (mock) owner names in the vehicle registry |
+| [Leaflet](https://leafletjs.com) | 1.9.4 | BSD-2-Clause | Interactive map on the Geo page and in the calibration dialog (loaded from the unpkg CDN at runtime) |
+
+## Map data
+
+| Service | Provider | Terms | Used for |
+|---|---|---|---|
+| [World Imagery](https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a4) | Esri, Maxar, Earthstar Geographics and the GIS user community | [Esri terms of use](https://www.esri.com/en-us/legal/terms/full-master-agreement); attribution shown on the map | Satellite background tiles, loaded at runtime and never stored or redistributed |
+
+The map needs an internet connection. No map tiles are included in the repository.
 
 ### Used only for comparison
 

@@ -18,7 +18,7 @@ from app.gui.widgets import Panel
 LIMIT = 2000
 SIGHTING_COLUMNS = ("TIME", "PLATE", "STATUS", "REVIEW", "SOURCE", "TYPE", "COLOUR", "TRACK", "READS", "SHARE")
 EVENT_COLUMNS = ("TIME", "LEVEL", "KIND", "PLATE", "MESSAGE")
-EVENT_KINDS = ("system", "run", "sighting", "review", "alert", "watchlist", "registry")
+EVENT_KINDS = ("system", "run", "sighting", "review", "alert", "watchlist", "registry", "geo")
 
 
 def make_table(columns: tuple[str, ...], stretch: int) -> QTableWidget:
