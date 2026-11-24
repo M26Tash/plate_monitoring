@@ -15,3 +15,7 @@ OCR_READ_EVERY = 1
 TRACKER = "botsort.yaml"
 
 DISPLAY_MAX_WIDTH = 1280
+
+DATA_DIR = ROOT / "data"
+DB_PATH = DATA_DIR / "oculus.db"
+CROPS_DIR = DATA_DIR / "crops"

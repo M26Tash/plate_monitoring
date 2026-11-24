@@ -1,0 +1,73 @@
+OCULUS - Source-Available Restricted License
+
+Copyright (c) 2026 Muhammed Taş. All rights reserved.
+
+The source code, documentation, trained model files and other material in this
+repository (the "Software") are made publicly visible so that people can see the
+author's work. Being visible does not make the Software open source.
+
+1. THE ONLY PERMITTED USES
+
+   a. Viewing. Anyone may read and browse the Software, for example on GitHub.
+
+   b. Evaluation. Instructors, examiners, reviewers and prospective employers or
+      collaborators may download, install and run the Software, only in order to
+      evaluate the author's work.
+
+   c. Personal learning. Individuals may run and modify a private copy of the
+      Software for their own non-commercial study, using footage they recorded
+      themselves or are otherwise allowed to use.
+
+   Each of these is subject to section 3.
+
+2. EVERYTHING ELSE IS FORBIDDEN
+
+   Any use not listed in section 1 is not permitted. This includes, but is not
+   limited to:
+
+   a. redistributing the Software, in whole or in part, modified or not, including
+      publishing copies, forks or mirrors outside GitHub's own fork feature;
+   b. commercial use of any kind, including in a product or service;
+   c. deploying the Software on real camera feeds or streams, or running it on
+      footage for any purpose other than those in section 1;
+   d. using the Software, any part of it, or data it produces in another project,
+      product, service or publication.
+
+3. PROHIBITED USES
+
+   Even within section 1, the Software and any data it produces must never be used
+   to:
+
+   a. stalk, follow, track or monitor a specific person or their vehicle;
+   b. harass, intimidate, threaten, blackmail or otherwise harm any person;
+   c. build profiles of individuals, such as their movements, habits, locations or
+      associations;
+   d. carry out covert or mass surveillance of any place;
+   e. discriminate against or target people because of ethnicity, religion,
+      political opinion, gender, sexual orientation, disability or any other
+      protected characteristic, or target journalists, activists or protesters;
+   f. sell, share or publish plate sightings or movement data tied to identifiable
+      people, or combine them with other data to identify people;
+   g. break any privacy or data-protection law, including KVKK (Turkey, Law
+      No. 6698) and the GDPR (EU) or local law.
+
+   See RESPONSIBLE_USE.md for the full policy.
+
+4. THIRD-PARTY COMPONENTS
+
+   The Software depends on third-party libraries and models that keep their own
+   licenses, listed in SOURCES.md. This license covers only the author's own work. It
+   does not change or override any third-party license. Anyone who uses the Software
+   must also comply with those licenses.
+
+5. TERMINATION
+
+   Any use outside section 1, or any use listed in section 3, ends all rights granted
+   by this license immediately and automatically.
+
+6. NO WARRANTY, NO LIABILITY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+   PLATE READINGS AND OTHER RESULTS CAN BE WRONG. IN NO EVENT SHALL THE AUTHOR BE
+   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE SOFTWARE, ITS
+   USE, ITS MISUSE, OR THE DATA IT PRODUCES.

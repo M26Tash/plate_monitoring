@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 
@@ -62,3 +62,19 @@ class VehicleTrack:
     plate: PlateDetection | None = None
     plate_text: str | None = None
     plate_status: PlateStatus | None = None
+
+
+@dataclass
+class TrackResult:
+    track_id: int
+    label: str
+    status: PlateStatus
+    plate: str | None
+    first_frame: int
+    last_frame: int
+    alternatives: tuple[str, ...] = ()
+    share: float = 0.0
+    reads: int = 0
+    plate_crop: object = None
+    vehicle_crop: object = None
+    path: list[tuple[int, int, int]] = field(default_factory=list)
