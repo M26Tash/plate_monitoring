@@ -76,6 +76,12 @@ class Chip(QLabel):
         super().__init__(text, parent)
         self.setObjectName("ChipLive" if live else "Chip")
 
+    def set_state(self, text: str, kind: str = "Chip") -> None:
+        self.setText(text)
+        self.setObjectName(kind)
+        self.style().unpolish(self)
+        self.style().polish(self)
+
 
 class UtcClock(QLabel):
 

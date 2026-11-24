@@ -117,8 +117,10 @@ class CalibrationDialog(QDialog):
         self.frame_view.clicked.connect(self._frame_clicked)
         frame_panel.body.addWidget(self.frame_view, 1)
         map_panel = Panel("Satellite map", meta="scroll to zoom · drag to pan")
-        self.map = MapView()
+        self.map = MapView(offline_hint="You can still calibrate: click the frame, then paste lat, lon below.")
         self.map.clicked.connect(self._map_clicked)
+        self.map.loaded.connect(self._on_map_loaded)
+        self._center: tuple[float, float, int] | None = None
         map_panel.body.addWidget(self.map, 1)
         views.addWidget(frame_panel, 1)
         views.addWidget(map_panel, 1)
@@ -169,11 +171,18 @@ class CalibrationDialog(QDialog):
                 saved = GeoMapper.from_json(source.calibration)
                 self.pixels = [tuple(p) for p in saved.image_points]
                 self.geo = [tuple(p) for p in saved.geo_points]
-                self.map.set_view(saved.lat0, saved.lon0, 18)
+                self._center = (saved.lat0, saved.lon0, 18)
             except (ValueError, KeyError):
                 pass
         elif source.lat is not None and source.lon is not None:
-            self.map.set_view(source.lat, source.lon, 18)
+            self._center = (source.lat, source.lon, 18)
+        self._refresh()
+
+    def _on_map_loaded(self) -> None:
+        if self.geo:
+            self._center = (*self.geo[-1], 18)
+        if self._center:
+            self.map.set_view(*self._center)
         self._refresh()
 
     def _frame_clicked(self, x: float, y: float) -> None:

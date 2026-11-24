@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import json
 
-from PySide6.QtCore import QObject, QUrl, Signal, Slot
+from PySide6.QtCore import QObject, Qt, QUrl, Signal, Slot
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWidgets import QLabel, QPushButton, QStackedWidget, QVBoxLayout, QWidget
 
 from app.gui import theme
+from app.gui.network import monitor
 
 HTML = """<!DOCTYPE html><html><head><meta charset="utf-8">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -101,35 +103,78 @@ class _Bridge(QObject):
         self.open_requested.emit(sighting_id)
 
 
-class MapView(QWebEngineView):
+OFFLINE_TEXT = ("[ MAP OFFLINE ]\n\n"
+                "No internet connection.\n"
+                "The map needs Leaflet (unpkg.com) and Esri satellite tiles.\n\n"
+                "Everything else keeps working offline.\n"
+                "Retrying automatically…")
+
+
+class MapView(QStackedWidget):
     clicked = Signal(float, float)
     open_requested = Signal(int)
+    loaded = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, offline_hint: str = ""):
         super().__init__(parent)
         self._ready = False
         self._pending: list[str] = []
-        self.settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+        self.web = QWebEngineView()
+        self.web.settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
         self._bridge = _Bridge()
         self._bridge.map_clicked.connect(self.clicked)
         self._bridge.open_requested.connect(self.open_requested)
         self._bridge.loaded.connect(self._on_loaded)
         self._channel = QWebChannel()
         self._channel.registerObject("bridge", self._bridge)
-        self.page().setWebChannel(self._channel)
-        self.page().setBackgroundColor(theme.BG)
-        self.setHtml(HTML, QUrl("qrc:///"))
+        self.web.page().setWebChannel(self._channel)
+        self.web.page().setBackgroundColor(theme.BG)
+
+        self.offline = QWidget()
+        lay = QVBoxLayout(self.offline)
+        label = QLabel(OFFLINE_TEXT + (f"\n\n{offline_hint}" if offline_hint else ""), objectName="KeyLabel")
+        label.setAlignment(Qt.AlignCenter)
+        label.setWordWrap(True)
+        retry = QPushButton("RETRY NOW")
+        retry.clicked.connect(lambda: monitor().check())
+        lay.addStretch(1)
+        lay.addWidget(label)
+        lay.addWidget(retry, alignment=Qt.AlignCenter)
+        lay.addStretch(1)
+
+        self.addWidget(self.web)
+        self.addWidget(self.offline)
+        net = monitor()
+        net.changed.connect(self._set_online)
+        if net.online is False:
+            self.setCurrentWidget(self.offline)
+        else:
+            self._load()
+
+    def _load(self) -> None:
+        self._ready = False
+        self._pending.clear()
+        self.web.setHtml(HTML, QUrl("qrc:///"))
+
+    def _set_online(self, online: bool) -> None:
+        if not online:
+            self.setCurrentWidget(self.offline)
+            return
+        self.setCurrentWidget(self.web)
+        if not self._ready:
+            self._load()
 
     def _on_loaded(self) -> None:
         self._ready = True
         for js in self._pending:
-            self.page().runJavaScript(js)
+            self.web.page().runJavaScript(js)
         self._pending.clear()
+        self.loaded.emit()
 
     def run(self, js: str) -> None:
         if self._ready:
-            self.page().runJavaScript(js)
-        else:
+            self.web.page().runJavaScript(js)
+        elif monitor().online is not False:
             self._pending.append(js)
 
     def set_view(self, lat: float, lon: float, zoom: int = 18) -> None:

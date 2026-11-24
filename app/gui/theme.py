@@ -46,6 +46,7 @@ QTabBar::tab:selected {{ color: {ACCENT}; border-bottom: 2px solid {ACCENT}; }}
 #LogoSub {{ color: {MUTED}; font-size: 10px; letter-spacing: 1px; }}
 #Chip {{ color: {MUTED}; border: 1px solid {BORDER}; padding: 3px 8px; font-size: 11px; }}
 #ChipLive {{ color: {OK}; border: 1px solid {OK}; padding: 3px 8px; font-size: 11px; }}
+#ChipDanger {{ color: {DANGER}; border: 1px solid {DANGER}; padding: 3px 8px; font-size: 11px; }}
 #Clock {{ color: {DATA}; font-size: 13px; font-weight: 600; padding-left: 6px; }}
 
 #SidebarPanel {{ background: {PANEL}; border-right: 1px solid {BORDER}; }}

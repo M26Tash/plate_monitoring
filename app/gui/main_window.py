@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (QHBoxLayout, QLabel, QListWidget, QListWidgetItem
 
 from app.gui.alerts import AlertToast
 from app.gui.context import AppContext
+from app.gui.network import monitor
 from app.gui.pages import all_pages
 from app.gui.pages.base import Page
 from app.gui.widgets import Chip, GridBackground, UtcClock
@@ -47,7 +48,6 @@ class MainWindow(QMainWindow):
         self.statusBar().addPermanentWidget(QLabel("v0.1  "))
         self._set_pipeline_state("idle")
         bus = ctx.bus
-        bus.source_changed.connect(self.set_source)
         bus.pipeline_state.connect(self._set_pipeline_state)
         bus.data_changed.connect(self.refresh_db_status)
         bus.alert.connect(self._on_alert)
@@ -110,11 +110,22 @@ class MainWindow(QMainWindow):
         logo.addWidget(QLabel("PLATE INTELLIGENCE CONSOLE", objectName="LogoSub"))
         lay.addLayout(logo)
         lay.addStretch(1)
-        self.source_chip = Chip("SRC  NONE")
-        for chip in (Chip("● SYS ONLINE", live=True), self.source_chip):
-            lay.addWidget(chip)
+        self.net_chip = Chip("◌ NET  CHECKING")
+        self.net_chip.setToolTip("Internet is needed only for the Geo map (Leaflet + Esri satellite tiles).\n"
+                                 "Detection, OCR, review and the database work offline.")
+        net = monitor()
+        net.changed.connect(self._set_online)
+        if net.online is not None:
+            self._set_online(net.online)
+        lay.addWidget(self.net_chip)
         lay.addWidget(UtcClock())
         return bar
+
+    def _set_online(self, online: bool) -> None:
+        if online:
+            self.net_chip.set_state("● NET  ONLINE", "ChipLive")
+        else:
+            self.net_chip.set_state("○ NET  OFFLINE · MAP UNAVAILABLE", "ChipDanger")
 
     def _sidebar(self) -> QWidget:
         self.sidebar = QListWidget(objectName="Sidebar")
@@ -145,9 +156,6 @@ class MainWindow(QMainWindow):
             self.stack.addWidget(page)
         lay.addWidget(self.stack)
         return stage
-
-    def set_source(self, name: str | None) -> None:
-        self.source_chip.setText(f"SRC  {name or 'NONE'}")
 
     def _show_page(self, index: int) -> None:
         if index < 0:

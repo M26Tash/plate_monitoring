@@ -66,6 +66,7 @@ class GeoPage(Page):
         map_panel = Panel("Map", meta="Esri World Imagery · click a path for details")
         self.map = MapView()
         self.map.open_requested.connect(self._open_sighting)
+        self.map.loaded.connect(lambda: self._shown and self.reload(fit=True))
         map_panel.body.addWidget(self.map, 1)
         body.addWidget(map_panel, 1)
         self.content.addLayout(body, 1)
